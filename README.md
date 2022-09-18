@@ -1,4 +1,4 @@
-# cryptonomicon
+# Project Cryptonomicon Vue 3
 
 ## Project setup
 ```
