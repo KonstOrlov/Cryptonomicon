@@ -48,8 +48,11 @@
           <div
               v-for="t in tickers"
               :key="t.name"
-              @click="sel = t"
+              @click="select(t)"
               class="bg-white overflow-hidden shadow rounded-lg border-purple-800 border-solid cursor-pointer"
+              :class="{
+                'border-4': sel === t,
+              }"
           >
             <div class="px-4 py-5 sm:p-6 text-center" >
               <dt class="text-sm font-medium text-gray-500 truncate" >
@@ -61,7 +64,7 @@
             </div >
             <div class="w-full border-t border-gray-200" ></div >
             <button
-                @click="handleDelete(t)"
+                @click.stop="handleDelete(t)"
                 class="flex items-center justify-center font-medium w-full bg-gray-100 px-4 py-4 sm:px-6 text-md text-gray-500 hover:text-gray-600 hover:bg-gray-200 hover:opacity-20 transition-all focus:outline-none"
             >
               <svg
@@ -76,23 +79,24 @@
                     d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
                     clip-rule="evenodd"
                 ></path >
-              </svg
-              >
+              </svg >
               Удалить
             </button >
           </div >
         </dl >
         <hr class="w-full border-t border-gray-600 my-4" />
       </template >
-      <section class="relative" >
+      <section v-if="sel" class="relative" >
         <h3 class="text-lg leading-6 font-medium text-gray-900 my-8" >
-          VUE - USD
+          {{ sel.name }} - USD
         </h3 >
         <div class="flex items-end border-gray-600 border-b border-l h-64" >
-          <div class="bg-purple-800 border w-10 h-24" ></div >
-          <div class="bg-purple-800 border w-10 h-32" ></div >
-          <div class="bg-purple-800 border w-10 h-48" ></div >
-          <div class="bg-purple-800 border w-10 h-16" ></div >
+          <div
+              v-for="(bar, index) in normalizeGraph()"
+              :key="index"
+              :style="{height:`${bar}%`}"
+              class="bg-purple-800 border w-10"
+          ></div >
         </div >
         <button
             @click="sel = null"
@@ -130,28 +134,47 @@ export default {
   name: "App",
   data() {
     return {
-      ticker: "default",
-      tickers: [
-        {name: "DEMO1", price: "-"},
-        {name: "DEMO2", price: "2"},
-        {name: "DEMO3", price: "-"}
-      ]
+      ticker: "",
+      tickers: [],
+      sel: null,
+      graph: []
     };
   },
 
   methods: {
     add() {
-      const newTicker = {
+      const currentTicker = {
         name: this.ticker,
         price: "-"
       };
 
-      this.tickers.push(newTicker);
+      this.tickers.push(currentTicker);
+      setInterval(async () => {
+        const f = await fetch(`https://min-api.cryptocompare.com/data/price?fsym=${currentTicker.name}&tsyms=USD&api_key=543fddd238bae987073644aad39e0ac448c4c5e65dcc58535d3d62d7f720c3e5`)
+        const data = await f.json();
+
+        this.tickers.find(t => t.name === currentTicker.name).price = data.USD > 1 ? data.USD.toFixed(2) : data.USD.toPrecision(2);
+
+        if(this.sel?.name === currentTicker.name) {
+          this.graph.push(data.USD)
+        }
+      }, 5000);
       this.ticker = "";
+    },
+
+    select(ticker) {
+      this.sel = ticker;
+      this.graph = [];
     },
 
     handleDelete(tickerToRemove) {
       this.tickers = this.tickers.filter(t => t !== tickerToRemove);
+    },
+
+    normalizeGraph() {
+      const maxValue = Math.max(...this.graph);
+      const minValue = Math.min(...this.graph);
+      return this.graph.map(price => 5 + ((price - minValue) * 95) / (maxValue - minValue))
     }
   }
 };
