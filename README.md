@@ -1,6 +1,7 @@
 # Project Cryptonomicon Vue 3
 
-## Free course Illya Klymov on YouTube: https://www.youtube.com/watch?v=4XTy6ucbLNg&list=PLvTBThJr861yMBhpKafII3HZLAYujuNWw
+## Free course Illya Klymov on YouTube: 
+### https://www.youtube.com/watch?v=4XTy6ucbLNg&list=PLvTBThJr861yMBhpKafII3HZLAYujuNWw
 
 ## Project setup
 ```
@@ -21,6 +22,3 @@ npm run build
 ```
 npm run lint
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
