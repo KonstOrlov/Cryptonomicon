@@ -299,6 +299,8 @@ export default {
   watch: {
     selectedTicker() {
       this.graph = [];
+      this.$nextTick()
+          .then(() => this.calculateMaxGraphElements())
     },
 
     tickers() {
