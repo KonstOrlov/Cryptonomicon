@@ -3,22 +3,10 @@
 ## Free course Illya Klymov on YouTube: 
 ### https://www.youtube.com/watch?v=4XTy6ucbLNg&list=PLvTBThJr861yMBhpKafII3HZLAYujuNWw
 
-## Project setup
-```
-npm install
-```
+## 💻 Установка зависимостей
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+##### `npm install` – установить зависимости проекта
 
-### Compiles and minifies for production
-```
-npm run build
-```
+##### `npm start` – запуск devServer на http://localhost:3000/
 
-### Lints and fixes files
-```
-npm run lint
-```
+##### `npm build` – production сборка проекта
