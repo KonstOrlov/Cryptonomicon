@@ -16,6 +16,9 @@
               placeholder="Например DOGE"
           />
         </div >
+        <div v-if="isDuplicate">
+          <div class="text-sm text-red-600">Такой тикер уже добавлен</div>
+        </div>
       </div >
     </div >
     <add-button @click="add" type="button" :disabled="disabled" class="my-4"/>
@@ -34,6 +37,13 @@ export default {
       type: Boolean,
       required: false,
       default: false,
+    },
+    allTickers: {
+      type: Array,
+      required: true,
+      default() {
+        return []
+      }
     }
   },
   emits:{
@@ -44,14 +54,24 @@ export default {
       ticker: '',
     }
   },
+  computed: {
+    isDuplicate() {
+      return this.allTickers?.filter((t) => t.name === this.ticker?.toUpperCase()).length;
+    }
+  },
   methods:{
     add() {
       if(this.ticker.length === 0) {
         return;
       }
+
+      if(this.isDuplicate) {
+        return;
+      }
+
       this.$emit('add-ticker',  this.ticker)
       this.ticker = "";
-    },
+    }
   }
 
 }
